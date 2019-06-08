@@ -6,7 +6,7 @@ import lenz.htw.cywwtaip.world.GraphNode;
 public class Main2 {
 
     public static void main(String[] args) {
-        NetworkClient client = new NetworkClient(null, "ICH", "SUPER!");
+        NetworkClient client = new NetworkClient(null, args[0]+" Torsten", "SUPER!");
 
         while (client.isAlive()) {
             client.getBotSpeed(0); // raw constant
@@ -22,7 +22,7 @@ public class Main2 {
             for (GraphNode n : graph[0].neighbors) {
                 System.out.println(n + ": " + n.owner + ", " + n.blocked);
             }
-            
+
         }
     }
 }
