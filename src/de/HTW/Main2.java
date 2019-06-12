@@ -2,6 +2,7 @@ package de.HTW;
 
 import lenz.htw.cywwtaip.net.NetworkClient;
 import lenz.htw.cywwtaip.world.GraphNode;
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 public class Main2 {
 
@@ -17,7 +18,8 @@ public class Main2 {
 
             float[] position = client.getBotPosition(0, 0); // array with x,y,z
             float[] direction = client.getBotDirection(0); // array with x,y,z
-
+            Vector3D  vec = new Vector3D(0,0,0);
+            vec.normalize();
             GraphNode[] graph = client.getGraph();
             for (GraphNode n : graph[0].neighbors) {
                 System.out.println(n + ": " + n.owner + ", " + n.blocked);
