@@ -52,6 +52,10 @@ public class Astar {
         }
         distance[start]=0;
         Q.addAll(Arrays.asList(graph));
+        //Remove obstacles from Map?
+        for (GraphNode a: Q){
+            if(a.blocked) Q.remove(a);
+        }
     }
 
     /**
