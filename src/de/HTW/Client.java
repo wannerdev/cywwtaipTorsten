@@ -11,32 +11,71 @@ public class Client {
     // java -Djava.library.path=lib/native -jar cywwtaip.jar
     public static void main(String[] args) {
         NetworkClient client = new NetworkClient("localhost", args[0]+" Torsten", "SUPER!");
+        int myPlNumber = client.getMyPlayerNumber();
         Rotator rot = new Rotator();
+        Target tar = new Target();
+        float ang3=0.0001f,angle =0.00001f; //Try to fill in circle motion
+        float ticks=0;
+        GraphNode[] graph = client.getGraph();
+        TNode[] TGraph = new TNode[graph.length];
+        TNode first= null;
+        for (int i=0; i< graph.length; i++) {
+            //System.out.println(n + ": " + n.owner + ", " + n.blocked);
+            TGraph[i]= new TNode(graph[i]);
+            //TGraph[i]
+        }
+        System.out.printf(args[0]+" TNodes:"+TGraph.length);
+        System.out.printf("first graphnode"+graph[0].toString());
+        System.out.printf("Nei from one"+graph[0].neighbors.toString());
         while (client.isAlive()) {
-            client.getBotSpeed(0); // raw constant
-            client.getScore(client.getMyPlayerNumber());
-            GraphNode[] myGraph = client.getGraph();
-            int nodeNo = 0;
-            nodesOfBots = new float[]{-1,-1,-1};
-            Vector3D Destination =  new Vector3D( 0,1,0);//myGraph[nodeNo].x,myGraph[nodeNo].y,myGraph[nodeNo].z);
-          //  System.out.println(Destination.toString());
-            float ang1 =  rot.getRotationAngle(Destination,client,0, client.getMyPlayerNumber());
-            float ang2 =  rot.getRotationAngle(Destination,client,1, client.getMyPlayerNumber());
-            float ang3 =  rot.getRotationAngle(Destination,client,2, client.getMyPlayerNumber());
-            client.changeMoveDirection(1, ang2);
-            client.changeMoveDirection(0, ang1);
-            client.changeMoveDirection(2,ang3);
+            //GraphNode[] myGraph = client.getGraph();
 
-           // float[] position = client.getBotPosition(0, 0); // array with x,y,z
+            //System.out.printf("First TNode"+TGraph[0].id);
+            nodesOfBots = new float[]{-1,-1,-1};
+//            Vector3D Destination =  new Vector3D( 0,0,0);//myGraph[nodeNo].x,myGraph[nodeNo].y,myGraph[nodeNo].z);
+            Vector3D Destination =  new Vector3D( -0.94,0,0);//myGraph[nodeNo].x,myGraph[nodeNo].y,myGraph[nodeNo].z);
+            //check Vector3D Destination =  new Vector3D( 0,0.95,0);//myGraph[nodeNo].x,myGraph[nodeNo].y,myGraph[nodeNo].z);
+            //check1 Vector3D Destination =  new Vector3D( 0,0,0.95);//myGraph[nodeNo].x,myGraph[nodeNo].y,myGraph[nodeNo].z);
+
+            Vector3D Destination0 = tar.giveClosestEnergy(client.getBotPosition(myPlNumber,0));
+            Vector3D Destination1 = tar.giveClosestEnergy(client.getBotPosition(myPlNumber,1));
+            Vector3D Destination2 = tar.giveClosestEnergy(client.getBotPosition(myPlNumber,2));
+            // System.out.println(Destination.toString());
+            float ang1 =  rot.getRotationAngle(Destination0, client,0, myPlNumber);
+            float ang2 =  rot.getRotationAngle(Destination1, client,1, myPlNumber);
+            //float ang3 =  rot.getRotationAngle(Destination2, client,2, myPlNumber);
+            client.changeMoveDirection(0, ang1);
+            client.changeMoveDirection(1, ang2);
+
+
+            client.changeMoveDirection(2, ang3);
+
+            //float[] position = client.getBotPosition(0, 0); // array with x,y,z
             //float[] direction = client.getBotDirection(0); // array with x,y,z
 
-            /*GraphNode[] graph = client.getGraph();
-            for (GraphNode n : graph[0].neighbors) {
-                System.out.println(n + ": " + n.owner + ", " + n.blocked);
-            }*/
 
         }
     }
+
+    /** Working circle angle
+     *              ang3=0;
+     *             ticks++;
+     *             if(ticks%15==0){
+     *                 ang3 = 0.00001f ;
+     *             }else{
+     *                 ang3=0;
+     *             }
+     *              //move in reducing circle only with Bot2(because of speed).
+     *             ticks++;
+     *             if(ticks== Float.MAX_VALUE)ticks=0;
+     *             if(ticks%15==0){
+     *                 ang3 = angle ;
+     *                 angle = angle - 0.000000000000001f;
+     *                 if(angle <=0)angle=0.00001f;
+     *             }else{
+     *                 ang3=0;
+     *             }
+     */
 
     /**
      * Sets the array nodesOfBots to the GraphNode indexes on the server
@@ -45,8 +84,8 @@ public class Client {
     private static void getMyNodes(NetworkClient client){
         GraphNode[] graph = client.getGraph();
         float pos1[] = client.getBotPosition(client.getMyPlayerNumber(),0);
-        float pos2[] = client.getBotPosition(client.getMyPlayerNumber(),0);
-        float pos3[] = client.getBotPosition(client.getMyPlayerNumber(),0);
+        float pos2[] = client.getBotPosition(client.getMyPlayerNumber(),1);
+        float pos3[] = client.getBotPosition(client.getMyPlayerNumber(),2);
         for (int i =0 ; i< graph.length; i++) {
             GraphNode n = graph[i];
             if(atNode(n,pos1))nodesOfBots[0]=i;

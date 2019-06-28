@@ -38,7 +38,7 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
         Vector3D b = projectPointToPlane(destination,n); //lineIntersection(n,n,destination,n);
         Vector3D u = getUVector(a,n);
         double bMagnitude = b.getNorm();
-        System.out.println("PLAYER "+Player+ " b Length = "+bMagnitude);
+        //System.out.println("PLAYER "+Player+ " b Length = "+bMagnitude);
         double ang = calcAng (a,b,aMagnitude,bMagnitude);
 
 
@@ -49,16 +49,12 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
             return (float)-ang;
         }
-
-
-
     }
 
 
     public static double calcAng( Vector3D a, Vector3D b, double aMagnitude, double bMagnitude){
 
        return java.lang.Math.acos(a.dotProduct(b)/(aMagnitude * bMagnitude));
-
     }
 
     /**
@@ -79,10 +75,7 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
     }
 
     public static Vector3D projectPointToPlane( Vector3D dest, Vector3D pos){
-
-
       return   dest.subtract(pos);
-
     }
 
 /*
