@@ -107,8 +107,11 @@ public class A_Star {
         return (float)v1.distance(v2);
     }
 
-    //Manhatten distance adapted
+    //
     private float heuristic_cost_estimate(TNode start, TNode goal) {
-        return (Math.abs(start.x - goal.x) + Math.abs(start.y - goal.y) + Math.abs(start.z - goal.z)) / 2;
+        float dx = Math.abs(start.x - goal.x);
+        float dy = Math.abs(start.y - goal.y);
+        float D=1; //test performance  with D=6
+        return D * (float)Math.sqrt(dx * dx + dy * dy);
     }
 }
