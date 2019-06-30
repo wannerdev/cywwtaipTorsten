@@ -2,9 +2,7 @@ package de.HTW;
 
 import lenz.htw.cywwtaip.world.GraphNode;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 public class Cluster {
     /*DBSCAN(D, eps, MinPts)
@@ -19,20 +17,25 @@ public class Cluster {
          expandCluster(P, N, C, eps, MinPts)*/
     ArrayList<Integer> visited;
     ArrayList<Integer> noise;
+    ArrayList<ArrayList<TNode>> clusters;
     TNode graD[];
+    private int owner=-1;
+
     //minpts limit to start a cluster
     //eps neighborhood size?
-    public Cluster (TNode graphD[], int eps, int minPts){
+    public Cluster (int owner,TNode graphD[], int eps, int minPts){
+        graD = graphD;//Init for class
+        ArrayList<ArrayList<TNode>> clusters=new ArrayList<>();
+        owner = owner;
         ArrayList<TNode> C;
-        graD = graphD;
-        for(TNode t : graphD){
-            visited.add(t.id);
-            ArrayList<TNode> groupN=query(t,eps);
+        for(TNode tp : graphD){
+            visited.add(tp.id);
+            ArrayList<TNode> groupN=query(tp,eps);
             if(groupN.size() < minPts){
-                noise.add(t.id);
+                noise.add(tp.id);
             }else{
                 C= new ArrayList<>();
-                expandCluster(t,groupN,C,eps, minPts);
+                expandCluster(tp,groupN,C,eps, minPts);
             }
         }
     }
@@ -67,6 +70,16 @@ public class Cluster {
                }
            }
        }
+        clusters.add(c);
+    }
+
+    ArrayList<TNode> getBiggestCluster(){
+        Collections.sort(clusters, new Comparator<ArrayList>() {
+            public int compare(ArrayList a1, ArrayList a2) {
+                return a2.size() - a1.size(); // assumes you want biggest to smallest
+            }
+        });
+        return clusters.get(0);
     }
 
     //eps radius of neighbors
@@ -79,7 +92,7 @@ public class Cluster {
             for(TNode t : list) {
                 for (TNode no : t.neighbors) {
                     //todo change
-                    if (no.owner == 1) { //|| RATEFUNCTION ||
+                    if (!isMyColor(no)) { //|| RATEFUNCTION ||
                         res.add(no);
                     }
                 }
@@ -92,9 +105,10 @@ public class Cluster {
         return res;
     }
 
+    private boolean isMyColor(TNode no) {
+        return no.owner == this.owner;
+    }
 /*
-
-
 regionQuery(P, eps)
    return all points within P's eps-neighborhood (including P)*/
 
