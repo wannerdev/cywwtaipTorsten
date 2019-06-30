@@ -30,37 +30,24 @@ public class Client {
         float rotspeed = 0.001f;
         while (client.isAlive()) {
 
-            if (Bot0.ready) {
 
-                Bot0.Update();
-            } else {
-                angle0 += rotspeed;
-                client.changeMoveDirection(0, angle0);
-
-
-
+            if (!client.isGameRunning()) {
+                return;
             }
-            if (Bot1.ready) {
 
-                Bot1.Update();
-            } else {
-                angle1 += rotspeed;
-                client.changeMoveDirection(1, angle1);
-            }
-            if (Bot2.ready) {
+            Bot0.Update();
 
-                Bot2.Update();
-            } else {
-                angle2 += rotspeed;
-                client.changeMoveDirection(2, angle2);
 
-            }
+            Bot1.Update();
+
+
+            Bot2.Update();
 
 
             if (frames % 500 == 0 && myPlNumber == 1) {
                 //  printBotDistances(Bot0,Bot1,Bot2);
-                float speed = client.getBotSpeed(0);
-                System.out.printf(" " +speed);
+                //float speed = client.getBotSpeed(0);
+                // System.out.printf(" " +speed);
 
             }
             frames++;
@@ -68,15 +55,14 @@ public class Client {
     }
 
 
-    static void printBotDistances(BotBehavior Bot0, BotBehavior Bot1, BotBehavior Bot2){
+    static void printBotDistances(BotBehavior Bot0, BotBehavior Bot1, BotBehavior Bot2) {
 
       /*  System.out.printf("BOT0 DIST :: " + Bot0.distToTarget);
         System.out.printf("BOT1 DIST :: " + Bot1.distToTarget);
         System.out.printf("BOT2 DIST :: " + Bot2.distToTarget);*/
-      // System.out.printf();
+        // System.out.printf();
         System.out.printf("BOT1 STATE :: " + Bot1.currentState);
         System.out.printf("BOT2 STATE :: " + Bot2.currentState);
-
 
 
     }

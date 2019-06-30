@@ -107,7 +107,8 @@ public class A_Star {
 
         while (!openSet.isEmpty()) {
             TNode current = lowestFcost();// openSet.iterator() the node in openSet having the lowest fScore[] value;
-            if (current.id == Goal.id) {
+
+            if (current.id == Goal.id|| closedSet.size() >= 1000) {
                 return reconstruct_path(cameFrom, current);
             }
 

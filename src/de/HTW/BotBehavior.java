@@ -21,6 +21,7 @@ public class BotBehavior {
     public double distToTarget;
     Rotator rot;
     Vector3D targetPos;
+    int counter = 0 ;
 
     public enum state {
         idle,
@@ -33,6 +34,7 @@ public class BotBehavior {
 
     public BotBehavior(int botNo, GraphNode[] graph, NetworkClient client, int PlayerNo) {
         this.graph = graph;
+        this.botNo = botNo;
         this.Client = client;
         this.PlayerNo = PlayerNo;
         currentState = state.idle;
@@ -50,17 +52,18 @@ public class BotBehavior {
             distToTarget = Vector3D.distance(pos, targetPos);
         }
 
-        GraphNode myGraphNode = getMyNodeId();
-        if (myGraphNode!= null){
-            currentNode = new TNode(myGraphNode);
-        }
+
 
     }
 
     void getNewDestination(){
 
         /// HIER KOMMT DEIN CODE HIN JOHANNES!!
-        finalDest = new TNode(graph[100]);//(int)(Math.random() * (graph.length - 0) + 1) + 0]);
+        finalDest = new TNode(graph[(int)(Math.random() * (graph.length - 0) + 1) + 0]);
+        GraphNode myGraphNode = getMyNodeId();
+        if (myGraphNode!= null){
+            currentNode = new TNode(myGraphNode);
+        }
         calcPath();
     }
 
@@ -76,13 +79,14 @@ public class BotBehavior {
                 move();
 
                 if (distToTarget <= 0.01f){
+                    myPath.remove(0);
                     if (myPath.size() <=0){
 
                         currentState = state.idle;
                         getNewDestination();
                     }else{
                         currentNode = target;
-                        myPath.remove(0);
+
                         target = myPath.get(0);
                         targetPos = new Vector3D(target.x, target.y, target.z);
                     }
@@ -136,7 +140,7 @@ public class BotBehavior {
     }
 
     public void calcPath() {
-
+        counter++;
         A_Star A = new A_Star(graph,currentNode,finalDest);
         myPath = A.A_Star();
         Collections.reverse(myPath);
@@ -144,11 +148,15 @@ public class BotBehavior {
         target = myPath.get(0);
         targetPos = new Vector3D(target.x, target.y, target.z);
         if (PlayerNo == 1){
+            System.out.printf("I was calles  "+counter +" times");
             System.out.printf("Player " + PlayerNo + " Bot "+ botNo+" finished Path");
         }
 
+
+
         ready = true;
         currentState = state.moving;
+
     }
 
 
@@ -161,7 +169,7 @@ public class BotBehavior {
     public GraphNode getMyNodeId() {
 
         for (int i = 0; i < graph.length; i++) {
-            if (pos.getX() == graph[i].x && pos.getY() == graph[i].y && pos.getZ() == graph[i].z) {
+            if (Client.getBotPosition(PlayerNo,botNo)[0] == graph[i].x && Client.getBotPosition(PlayerNo,botNo)[1] == graph[i].y && Client.getBotPosition(PlayerNo,botNo)[2] == graph[i].z ) {
 
                 return  graph[i];
             }
@@ -171,8 +179,6 @@ public class BotBehavior {
 
     }
 
-    public int hashCode(float x, float y, float z) {
-        return (int) (((float) ((int) (((float) ((int) (x * 1260.0F)) + y) * 1260.0F)) + z) * 1260.0F);
-    }
+
 
 }
