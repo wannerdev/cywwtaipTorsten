@@ -15,29 +15,38 @@ public class Cluster {
       else
          C = next cluster
          expandCluster(P, N, C, eps, MinPts)*/
-    ArrayList<Integer> visited;
-    ArrayList<Integer> noise;
-    ArrayList<ArrayList<TNode>> clusters;
-    TNode graD[];
+    ArrayList<Integer> visited=new ArrayList<>();
+    ArrayList<Integer> noise=new ArrayList<>();
+    ArrayList<ArrayList<GraphNode>> clusters=new ArrayList<>();
+    GraphNode graD[];
     private int owner=-1;
 
     //minpts limit to start a cluster
     //eps neighborhood size?
-    public Cluster (int owner,TNode graphD[], int eps, int minPts){
+
+    /**
+     *
+     * @param owner
+     * @param graphD
+     * @param eps
+     * @param minPts
+     */
+    public Cluster (int owner,GraphNode graphD[], int eps, int minPts){
         graD = graphD;//Init for class
-        ArrayList<ArrayList<TNode>> clusters=new ArrayList<>();
         owner = owner;
-        ArrayList<TNode> C;
-        for(TNode tp : graphD){
-            visited.add(tp.id);
-            ArrayList<TNode> groupN=query(tp,eps);
+        ArrayList<GraphNode> C;
+        for(int i=0; i <  graphD.length;i++){ //evtl sont look at all
+            GraphNode tp = graphD[i];
+            visited.add(tp.hashCode());
+            ArrayList<GraphNode> groupN=query(tp,eps);
             if(groupN.size() < minPts){
-                noise.add(tp.id);
+                noise.add(tp.hashCode());
             }else{
                 C= new ArrayList<>();
                 expandCluster(tp,groupN,C,eps, minPts);
             }
         }
+        System.out.println("Cluster init");
     }
 
 /*expandCluster(P, N, C, eps, MinPts)
@@ -51,13 +60,12 @@ public class Cluster {
       if P' is not yet member of any cluster
          add P' to cluster C
          unmark P' as NOISE if necessary*/
-    public void expandCluster(TNode p, ArrayList<TNode> N, ArrayList<TNode> c, int eps,int MinPts)
-    {
-        c.add(p);
-       for (TNode newp: N) {
+    public void expandCluster(GraphNode p, ArrayList<GraphNode> N, ArrayList<GraphNode> c, int eps,int MinPts){
+       c.add(p);
+       for (GraphNode newp: N) {
            if (!visited.contains(newp)) {// ' is not visited
-               visited.add(newp.id);//mark P' as visited
-               ArrayList<TNode> newN = query(newp, eps);
+               visited.add(newp.hashCode());//mark P' as visited
+               ArrayList<GraphNode> newN = query(newp, eps);
                if (newN.size() >= MinPts) {
                    N.addAll(newN); //joined with N'
                    if (!c.contains(newp)) {// is not yet member of any cluster
@@ -73,7 +81,7 @@ public class Cluster {
         clusters.add(c);
     }
 
-    ArrayList<TNode> getBiggestCluster(){
+    ArrayList<GraphNode> getBiggestCluster(){
         Collections.sort(clusters, new Comparator<ArrayList>() {
             public int compare(ArrayList a1, ArrayList a2) {
                 return a2.size() - a1.size(); // assumes you want biggest to smallest
@@ -83,29 +91,32 @@ public class Cluster {
     }
 
     //eps radius of neighbors
-    public ArrayList<TNode> query(TNode tin,int eps){
-        ArrayList<TNode> res = new ArrayList<>();
+    public ArrayList<GraphNode> query(GraphNode tin,int eps){
+        ArrayList<GraphNode> res = new ArrayList<>();
         res.add(tin);
-        ArrayList<TNode> list=new ArrayList<>();;
+        ArrayList<GraphNode> list=new ArrayList<>();;
+        ArrayList<GraphNode> list2=new ArrayList<>();;
         list.add(tin);
-        while(eps!=0){
-            for(TNode t : list) {
-                for (TNode no : t.neighbors) {
+        for(int i=0; i < eps; i++ ){
+                for (GraphNode no : list) {
                     //todo change
                     if (!isMyColor(no)) { //|| RATEFUNCTION ||
                         res.add(no);
+                        list2.addAll(Arrays.asList(no.neighbors));
                     }
                 }
-                list = t.neighbors;
-                eps--;
+            for (GraphNode no : list2) {
+                //todo change
+                if (!isMyColor(no)) { //|| RATEFUNCTION ||
+                    res.add(no);
+                    list.addAll(Arrays.asList(no.neighbors));
+                }
             }
         }
-        //res=(TNode[])t.neighbors.toArray();
-        //res[7]=t;
         return res;
     }
 
-    private boolean isMyColor(TNode no) {
+    private boolean isMyColor(GraphNode no) {
         return no.owner == this.owner;
     }
 /*
