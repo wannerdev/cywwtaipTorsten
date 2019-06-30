@@ -14,50 +14,73 @@ public class Client {
 
     // java -Djava.library.path=lib/native -jar cywwtaip.jar
     public static void main(String[] args) {
-        NetworkClient client = new NetworkClient("localhost", args[0]+" Torsten", "SUPER!");
+        NetworkClient client = new NetworkClient("localhost", args[0] + " Torsten", "SUPER!");
         int myPlNumber = client.getMyPlayerNumber();
-        Rotator rot = new Rotator();
-        Target tar = new Target();
-        float ang3=0.0001f,angle =0.00001f; //Try to fill in circle motion
-        float ticks=0;
         GraphNode[] graph = client.getGraph();
-        TNode first= null;
-        //System.out.printf(args[0]+" TNodes:"+TGraph.length);
-        //System.out.printf("first graphnode"+graph[0].toString());
-        //System.out.printf("Nei from one"+graph[0].neighbors.toString());
-        nodesOfBots = new float[]{-1,-1,-1};
+
+        BotBehavior Bot0 = new BotBehavior(0, graph, client, myPlNumber);
+        BotBehavior Bot1 = new BotBehavior(1, graph, client, myPlNumber);
+        BotBehavior Bot2 = new BotBehavior(2, graph, client, myPlNumber);
 
 
-
-
+        int frames = 0;
+        float angle0 = 0;
+        float angle1 = 0;
+        float angle2 = 0;
+        float rotspeed = 0.001f;
         while (client.isAlive()) {
 
+            if (Bot0.ready) {
 
-//            Vector3D Destination =  new Vector3D( 0,0,0);//myGraph[nodeNo].x,myGraph[nodeNo].y,myGraph[nodeNo].z);
-            Vector3D Destination =  new Vector3D( -0.94,0,0);//myGraph[nodeNo].x,myGraph[nodeNo].y,myGraph[nodeNo].z);
-            //check Vector3D Destination =  new Vector3D( 0,0.95,0);//myGraph[nodeNo].x,myGraph[nodeNo].y,myGraph[nodeNo].z);
-            //check1 Vector3D Destination =  new Vector3D( 0,0,0.95);//myGraph[nodeNo].x,myGraph[nodeNo].y,myGraph[nodeNo].z);
-
-            Vector3D Destination0 = tar.giveClosestEnergy(client.getBotPosition(myPlNumber,0));
-            Vector3D Destination1 = tar.giveClosestEnergy(client.getBotPosition(myPlNumber,1));
-            Vector3D Destination2 = tar.giveClosestEnergy(client.getBotPosition(myPlNumber,2));
-            // System.out.println(Destination.toString());
+                Bot0.Update();
+            } else {
+                angle0 += rotspeed;
+                client.changeMoveDirection(0, angle0);
 
 
-         
 
-            client.changeMoveDirection(0, ang1);
-            client.changeMoveDirection(1, ang2);
+            }
+            if (Bot1.ready) {
+
+                Bot1.Update();
+            } else {
+                angle1 += rotspeed;
+                client.changeMoveDirection(1, angle1);
+            }
+            if (Bot2.ready) {
+
+                Bot2.Update();
+            } else {
+                angle2 += rotspeed;
+                client.changeMoveDirection(2, angle2);
+
+            }
 
 
-            client.changeMoveDirection(2, ang3);
+            if (frames % 500 == 0 && myPlNumber == 1) {
+                //  printBotDistances(Bot0,Bot1,Bot2);
+                float speed = client.getBotSpeed(0);
+                System.out.printf(" " +speed);
 
-            //float[] position = client.getBotPosition(0, 0); // array with x,y,z
-            //float[] direction = client.getBotDirection(0); // array with x,y,z
-
-
+            }
+            frames++;
         }
     }
+
+
+    static void printBotDistances(BotBehavior Bot0, BotBehavior Bot1, BotBehavior Bot2){
+
+      /*  System.out.printf("BOT0 DIST :: " + Bot0.distToTarget);
+        System.out.printf("BOT1 DIST :: " + Bot1.distToTarget);
+        System.out.printf("BOT2 DIST :: " + Bot2.distToTarget);*/
+      // System.out.printf();
+        System.out.printf("BOT1 STATE :: " + Bot1.currentState);
+        System.out.printf("BOT2 STATE :: " + Bot2.currentState);
+
+
+
+    }
+
 
     /** Working circle angle
      *              ang3=0;

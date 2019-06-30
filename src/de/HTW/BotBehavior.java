@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class BotBehavior {
 
     int botNo, PlayerNo;
-    public boolean atTarget = false;
+    public boolean ready = false;
     public TNode target,currentNode,finalDest;
     NetworkClient Client;
     public GraphNode[] graph;
@@ -29,46 +29,70 @@ public class BotBehavior {
         recharge;
 
     }
-
     public state currentState;
 
     public BotBehavior(int botNo, GraphNode[] graph, NetworkClient client, int PlayerNo) {
         this.graph = graph;
         this.Client = client;
         this.PlayerNo = PlayerNo;
-        GraphNode myGraphNode = getMyNodeId(Client, botNo);
-        currentNode = new TNode(myGraphNode);
-        finalDest = new TNode(graph[])
         currentState = state.idle;
+        updateInfo();
+        getNewDestination();
+
     }
 
     public void updateInfo() {
         float[] vec = Client.getBotPosition(PlayerNo, botNo);
         pos = new Vector3D(vec[0], vec[1], vec[2]);
         energyLevel = Client.getBotSpeed(botNo);
-        GraphNode myGraphNode = getMyNodeId(Client, botNo);
-        currentNode = new TNode(myGraphNode);
 
         if (target != null) {
-            targetPos = new Vector3D(target.x, target.y, target.z);
             distToTarget = Vector3D.distance(pos, targetPos);
+        }
+
+        GraphNode myGraphNode = getMyNodeId();
+        if (myGraphNode!= null){
+            currentNode = new TNode(myGraphNode);
         }
 
     }
 
+    void getNewDestination(){
+
+        /// HIER KOMMT DEIN CODE HIN JOHANNES!!
+        finalDest = new TNode(graph[100]);//(int)(Math.random() * (graph.length - 0) + 1) + 0]);
+        calcPath();
+    }
 
     public void Update() {
-
+        if (!ready){
+            currentState = state.idle;
+        }
         updateInfo();
 
         switch (currentState) {
 
             case moving:
                 move();
+
+                if (distToTarget <= 0.01f){
+                    if (myPath.size() <=0){
+
+                        currentState = state.idle;
+                        getNewDestination();
+                    }else{
+                        currentNode = target;
+                        myPath.remove(0);
+                        target = myPath.get(0);
+                        targetPos = new Vector3D(target.x, target.y, target.z);
+                    }
+                }
                 break;
+
             case idle:
                 idle();
                 break;
+
             case recharge:
                 recharge();
                 break;
@@ -89,7 +113,7 @@ public class BotBehavior {
 
         float angle =  rot.getRotationAngle(targetPos, Client,botNo, PlayerNo);
 
-
+        Client.changeMoveDirection(botNo, angle);
 
     }
 
@@ -100,7 +124,10 @@ public class BotBehavior {
 
     public void idle() {
 
+        float angle = 0;
+        angle += 0.001f;
 
+        Client.changeMoveDirection(botNo, angle);
     }
 
     public void recharge() {
@@ -110,59 +137,42 @@ public class BotBehavior {
 
     public void calcPath() {
 
-        A_Star A = new A_Star(graph,currentNode,target);
+        A_Star A = new A_Star(graph,currentNode,finalDest);
         myPath = A.A_Star();
         Collections.reverse(myPath);
         myPath.remove(0);
         target = myPath.get(0);
+        targetPos = new Vector3D(target.x, target.y, target.z);
+        if (PlayerNo == 1){
+            System.out.printf("Player " + PlayerNo + " Bot "+ botNo+" finished Path");
+        }
+
+        ready = true;
+        currentState = state.moving;
     }
 
-    private static void getMyNodes(NetworkClient client) {
-        GraphNode[] graph = client.getGraph();
-        float pos1[] = client.getBotPosition(client.getMyPlayerNumber(), 0);
-        float pos2[] = client.getBotPosition(client.getMyPlayerNumber(), 1);
-        float pos3[] = client.getBotPosition(client.getMyPlayerNumber(), 2);
-        for (int i = 0; i < graph.length; i++) {
-            GraphNode n = graph[i];
-            if (atNode(n, pos1)) nodesOfBots[0] = i;
-            if (atNode(n, pos2)) nodesOfBots[1] = i;
-            if (atNode(n, pos3)) nodesOfBots[2] = i;
-        }
-    }
 
     /**
      * Searches graph for the node with the corresponding bot.(dumb search)
      *
-     * @param client
-     * @param bot
+
      * @returns GraphNode of the position of the Bot
      */
-    public static GraphNode getMyNodeId(NetworkClient client, int bot) {
-        GraphNode[] graph = client.getGraph();
-        float pos1[] = client.getBotPosition(client.getMyPlayerNumber(), bot);
-        int i = 0;
-        for (; i < graph.length; i++) {
-            if (atNode(graph[i], pos1)) {
-                nodesOfBots[bot] = i;
-                break;
+    public GraphNode getMyNodeId() {
+
+        for (int i = 0; i < graph.length; i++) {
+            if (pos.getX() == graph[i].x && pos.getY() == graph[i].y && pos.getZ() == graph[i].z) {
+
+                return  graph[i];
             }
         }
-        return graph[i];
+      //  System.out.printf("no Node for Pos");
+        return null;
+
     }
 
-    /**
-     * Just a simple check if the positions match
-     *
-     * @param n
-     * @param spot
-     * @return
-     */
-    public static boolean atNode(GraphNode n, float spot[]) {
-        if (n.blocked) return false;
-        if (n.x == spot[0] && n.y == spot[1] && n.z == spot[2]) {
-            return true;
-        }
-        return false;
+    public int hashCode(float x, float y, float z) {
+        return (int) (((float) ((int) (((float) ((int) (x * 1260.0F)) + y) * 1260.0F)) + z) * 1260.0F);
     }
 
 }

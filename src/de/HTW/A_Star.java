@@ -22,7 +22,7 @@ public class A_Star {
         graph = sourceGraph;
         gscore = new HashMap<>();
         this.Start = start;
-        this.Start.distance = 0;
+
         this.Goal = goal;
         for (int i = 0; i < graph.length; i++) {
 
@@ -65,7 +65,7 @@ public class A_Star {
             current = cameFrom.get(current.id);
             total_path.add(current);
         }
-        System.out.printf("finished Path");
+        //System.out.printf("finished Path");
         return total_path;
     }
 
