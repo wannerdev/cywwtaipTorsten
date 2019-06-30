@@ -4,10 +4,11 @@ import lenz.htw.cywwtaip.world.GraphNode;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
-public class TNode {
-
-    static int counter=0;
+public class TNode implements Comparable<TNode>  {
+    static private final Comparator<TNode> COMPARATOR = Comparator.comparing(TNode::getDistance);
+    static int counter = 0;
     //Maybe by importing create a id for each node
     public int id;
     public double distance;
@@ -22,8 +23,8 @@ public class TNode {
 
     public TNode(GraphNode in) {
         counter++;
-        predecessor=null;
-        distance=Double.MAX_VALUE;
+        predecessor = null;
+        distance = Double.MAX_VALUE;
         id = counter;
         this.x = in.x;
         this.y = in.y;
@@ -40,12 +41,16 @@ public class TNode {
     }
 
 
-    public TNode(){
-        distance=Double.MAX_VALUE;
+    public TNode() {
+        distance = Double.MAX_VALUE;
+    }
+
+    public double getDistance() {
+        return distance;
     }
 
     public int hashCode() {
-        return (int)(((float)((int)(((float)((int)(this.x * 1260.0F)) + this.y) * 1260.0F)) + this.z) * 1260.0F);
+        return (int) (((float) ((int) (((float) ((int) (this.x * 1260.0F)) + this.y) * 1260.0F)) + this.z) * 1260.0F);
     }
 
     public boolean equals(Object obj) {
@@ -58,17 +63,21 @@ public class TNode {
         }
     }
 
-    public void setNeighbors(GraphNode[] neighbors ) {
-        for(int i=0; i < neighbors.length;i++){
-           this.neighbors.add(new TNode(neighbors[i]));
+    public void setNeighbors(GraphNode[] neighbors) {
+        for (int i = 0; i < neighbors.length; i++) {
+            if (!neighbors[i].blocked)
+                this.neighbors.add(new TNode(neighbors[i]));
         }
     }
 
 
-
-
     public String toString() {
         return "x=" + this.x + ", y=" + this.y + ", z=" + this.z;
+    }
+
+    @Override
+    public int compareTo(TNode o) {
+        return COMPARATOR.compare(this,o);
     }
 }
 

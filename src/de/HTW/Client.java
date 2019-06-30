@@ -28,7 +28,7 @@ public class Client {
         TNode myTNode = new TNode(myGraphNode);
         TNode targetNode = new TNode(graph[100]);
         dijkstra D  = new dijkstra(graph,myTNode,targetNode);
-        ArrayList<TNode> path = D.createShortestPath();
+       // ArrayList<TNode> path = D.createShortestPath();
         while (client.isAlive()) {
             //GraphNode[] myGraph = client.getGraph();
 

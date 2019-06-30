@@ -3,24 +3,33 @@ package de.HTW;
 import lenz.htw.cywwtaip.world.GraphNode;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.PriorityQueue;
-import java.util.Stack;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+
+import static java.util.stream.Collectors.*;
+import static java.util.Map.Entry.*;
+
+import java.util.*;
 
 public class dijkstra {
 
-    private ArrayList<TNode> unsettledNodes = new ArrayList<>();
+    private Map<Integer, TNode> unsettledNodes =new LinkedHashMap<>();
     private ArrayList<TNode> settledNodes = new ArrayList<>();
     private TNode sourceNode, targetNode;
     private GraphNode[] graph;
     private ArrayList<TNode> graphNodes = new ArrayList<>();
+    private Map<Integer, TNode> distMap = new LinkedHashMap<>();
 
 
     public dijkstra(GraphNode[] sourceGraph, TNode rootNode, TNode targetNode) {
 
         graph = sourceGraph;
-
+        System.out.printf("Hi");
+         this.targetNode = targetNode;
 
         for (int i = 0; i < graph.length; i++) {
             TNode node = new TNode(graph[i]);
@@ -31,15 +40,18 @@ public class dijkstra {
             //Remove obstacles from Map?
             if (!node.blocked) {
                 graphNodes.add(node);
+                distMap.put(node.hashCode(), node);
+                unsettledNodes.put(node.hashCode(), node);
             }
+
 
 
         }
         this.sourceNode = rootNode;
         this.sourceNode.distance = 0;
 
-        unsettledNodes.addAll(graphNodes);
 
+        System.out.printf("starting evaluating");
         calculateShortestPathFromSource();
         System.out.printf("finished evaluating");
     }
@@ -47,13 +59,13 @@ public class dijkstra {
     private void calculateShortestPathFromSource() {
 
 
-        int i = 0 ;
+        int i = 0;
         while (unsettledNodes.size() != 0) {
-            TNode currentNode = getNodewithShortestDistance(graphNodes);
+            TNode currentNode = getNodewithShortestDistance(unsettledNodes);
 
 
             currentNode.setNeighbors(findSiblingNode(currentNode).neighbors);
-            unsettledNodes.remove(currentNode);
+            unsettledNodes.remove(currentNode.hashCode());
 
             if (currentNode == targetNode) {
 
@@ -63,10 +75,10 @@ public class dijkstra {
             for (TNode neighbor : currentNode.neighbors)
 
                 if (!settledNodes.contains(neighbor)) {
-
-                    double cost = currentNode.distance + getLength(currentNode, neighbor);
-
-                    if (cost < neighbor.distance) {
+                    double curDist = distMap.get(currentNode.hashCode()).distance;
+                    double cost = curDist + getLength(currentNode, neighbor);
+                    double neighDist = distMap.get(neighbor.hashCode()).distance;
+                    if (cost < neighDist) {
 
                         neighbor.distance = cost;
                         neighbor.predecessor = currentNode;
@@ -76,22 +88,28 @@ public class dijkstra {
                     }
 
                 }
-            System.out.printf("evaluated: "+ i++ + " nodes" );
+
+
+            if ( i > 500){
+
+                System.out.printf("unsettledNode Size: " + unsettledNodes.size());
+            }
+            System.out.printf("evaluated: " + i++ + " nodes");
         }
 
 
     }
 
-   public ArrayList<TNode> createShortestPath(){
+    public ArrayList<TNode> createShortestPath() {
 
-       ArrayList<TNode> path = new ArrayList<>();
-       path.add(targetNode);
-       TNode u = targetNode;
-       while (u.predecessor != null || u.hashCode() == sourceNode.hashCode()) {
-           u = u.predecessor;
-           path.add(u);
-       }
-       return path;
+        ArrayList<TNode> path = new ArrayList<>();
+        path.add(targetNode);
+        TNode u = targetNode;
+        while (u.predecessor != null || u.hashCode() == sourceNode.hashCode()) {
+            u = u.predecessor;
+            path.add(u);
+        }
+        return path;
 
     }
 
@@ -104,10 +122,10 @@ public class dijkstra {
         return v1.distance(v2);
     }
 
-    /*
-    Get the node with the shortest distance from the stack
-     */
-    private TNode getNodewithShortestDistance(ArrayList<TNode> Nodes) {
+
+    //Get the node with the shortest distance from the stack
+
+    /*private TNode getNodewithShortestDistance(ArrayList<TNode> Nodes) {
 
         TNode shortestDistNode = new TNode();
         for (TNode node : Nodes) {
@@ -128,12 +146,35 @@ public class dijkstra {
         return shortestDistNode;
 
 
+    }*/
+
+    private TNode getNodewithShortestDistance( Map<Integer, TNode> sourceMap) {
+
+
+        Map<Integer, TNode> sorted = new HashMap<>();
+
+        sorted = sourceMap
+                .entrySet()
+                .stream()
+                .sorted(comparingByValue())
+                .collect(
+                        toMap(e -> e.getKey(), e -> e.getValue(), (e1, e2) -> e2,
+                                LinkedHashMap::new));
+
+        Map.Entry<Integer,TNode> entry = sorted.entrySet().iterator().next();
+
+        TNode firstVal = entry.getValue();
+        return firstVal;
     }
 
 
     void updateTnode(TNode source) {
 
-        for (TNode node : graphNodes) {
+
+        distMap.replace(source.hashCode(), source);
+        unsettledNodes.replace(source.hashCode(), source);
+
+       /* for (TNode node : graphNodes) {
 
 
             if (node.hashCode() == source.hashCode()) {
@@ -153,7 +194,7 @@ public class dijkstra {
                 break;
             }
 
-        }
+        }*/
 
     }
 
