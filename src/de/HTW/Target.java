@@ -17,7 +17,7 @@ public class Target {
      * @param pos
      * @return
      */
-    public Vector3D giveClosestEnergy(float[] pos){
+    public static Vector3D giveClosestEnergy(float[] pos){
         double varpos[]={0,0,0};
         varpos[0] = pos[0];//Math.abs(pos.getX())-0.94;
         varpos[1] = pos[1];//Math.abs(pos.getY())-0.94;

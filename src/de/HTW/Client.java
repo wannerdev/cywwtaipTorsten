@@ -17,22 +17,33 @@ public class Client {
         NetworkClient client = new NetworkClient("localhost", args[0] + " Torsten", "SUPER!");
         int myPlNumber = client.getMyPlayerNumber();
         GraphNode[] graph = client.getGraph();
+        Cluster cl;
 
-        BotBehavior Bot0 = new BotBehavior(0, graph, client, myPlNumber);
-        BotBehavior Bot1 = new BotBehavior(1, graph, client, myPlNumber);
-        BotBehavior Bot2 = new BotBehavior(2, graph, client, myPlNumber);
+       // cl = new Cluster(myPlNumber, graph, 3, 10000);
+        BotBehavior Bot0 = new BotBehavior(0, graph, client, myPlNumber,BotBehavior.type.random);
+        BotBehavior Bot1 = new BotBehavior(1, graph, client, myPlNumber,BotBehavior.type.random);
+        BotBehavior Bot2 = new BotBehavior(2, graph, client, myPlNumber,BotBehavior.type.random);
 
 
         int frames = 0;
-        float angle0 = 0;
-        float angle1 = 0;
-        float angle2 = 0;
-        float rotspeed = 0.001f;
+        long current=System.currentTimeMillis();
+        int ticks = 0;
+
         while (client.isAlive()) {
 
 
             if (!client.isGameRunning()) {
                 return;
+            }
+            ticks++;
+            if(current+5000 < System.currentTimeMillis() ) {
+                current = System.currentTimeMillis();
+
+            }
+
+            if (frames == 100) {
+                graph = client.getGraph();
+                //cl = new Cluster(myPlNumber, graph, 3, 10000);
             }
 
             Bot0.Update();

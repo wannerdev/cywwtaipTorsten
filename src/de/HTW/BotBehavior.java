@@ -22,6 +22,7 @@ public class BotBehavior {
     Rotator rot;
     Vector3D targetPos;
     int counter = 0 ;
+    Cluster cl;
 
     public enum state {
         idle,
@@ -30,13 +31,23 @@ public class BotBehavior {
         recharge;
 
     }
+    public enum type {
+        random,
+        recharger,
+        cluster;
+
+
+    }
+    public type  botType = type.random;
     public state currentState;
 
-    public BotBehavior(int botNo, GraphNode[] graph, NetworkClient client, int PlayerNo) {
+    public BotBehavior(int botNo, GraphNode[] graph, NetworkClient client, int PlayerNo,BotBehavior.type behaviorType){//, Cluster cl) {
         this.graph = graph;
         this.botNo = botNo;
         this.Client = client;
         this.PlayerNo = PlayerNo;
+       // this.cl = cl;
+        botType = behaviorType;
         currentState = state.idle;
         updateInfo();
         getNewDestination();
@@ -59,7 +70,32 @@ public class BotBehavior {
     void getNewDestination(){
 
         /// HIER KOMMT DEIN CODE HIN JOHANNES!!
-        finalDest = new TNode(graph[(int)(Math.random() * (graph.length - 0) + 1) + 0]);
+
+
+        switch (botType) {
+
+            case random:
+                finalDest = new TNode(graph[(int)(Math.random() * (graph.length - 0) + 1) + 0]);
+                break;
+
+            case cluster:
+                cl.getBiggestCluster().get(0);
+                finalDest  = new TNode(cl.getBiggestCluster().get(0));
+                break;
+
+            case recharger:
+                float[] pos = {Client.getBotPosition(PlayerNo,botNo)[0],Client.getBotPosition(PlayerNo,botNo)[1],Client.getBotPosition(PlayerNo,botNo)[2]};
+                Vector3D vec =Target.giveClosestEnergy(pos);
+
+                GraphNode myGraphNode = getMyNodeId(vec.getX(),vec.getY(),vec.getZ());
+                finalDest  = new TNode(myGraphNode);
+                break;
+
+
+        }
+
+
+
         GraphNode myGraphNode = getMyNodeId();
         if (myGraphNode!= null){
             currentNode = new TNode(myGraphNode);
@@ -175,6 +211,19 @@ public class BotBehavior {
             }
         }
       //  System.out.printf("no Node for Pos");
+        return null;
+
+    }
+
+    public GraphNode getMyNodeId(double x, double y, double z) {
+
+        for (int i = 0; i < graph.length; i++) {
+            if (x == graph[i].x && y == graph[i].y && z == graph[i].z ) {
+
+                return  graph[i];
+            }
+        }
+        //  System.out.printf("no Node for Pos");
         return null;
 
     }
