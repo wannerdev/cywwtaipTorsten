@@ -1,6 +1,9 @@
 package de.HTW;
 
 import lenz.htw.cywwtaip.world.GraphNode;
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+
+import java.util.ArrayList;
 
 public class TNode {
 
@@ -9,7 +12,7 @@ public class TNode {
     public int id;
     public double distance;
     public TNode predecessor;
-    public TNode neighbors[];
+    public ArrayList<TNode> neighbors = new ArrayList<>();
 
     public float x;
     public float y;
@@ -28,12 +31,17 @@ public class TNode {
         this.blocked = in.blocked;
         this.owner = in.owner;
 
-        this.neighbors = new TNode[in.neighbors.length];
+        //this.neighbors = new TNode[in.neighbors.length];
         //this.setNeighbors(in.neighbors);
         //for(int i=0; i <neighbors.length; i++){
         //    this.neighbors[i] = new TNode(in_neighbors[i], in_neighbors[i].neighbors);
         //}
 
+    }
+
+
+    public TNode(){
+        distance=Double.MAX_VALUE;
     }
 
     public int hashCode() {
@@ -52,9 +60,12 @@ public class TNode {
 
     public void setNeighbors(GraphNode[] neighbors ) {
         for(int i=0; i < neighbors.length;i++){
-            this.neighbors[i] =new TNode(neighbors[i]);
+           this.neighbors.add(new TNode(neighbors[i]));
         }
     }
+
+
+
 
     public String toString() {
         return "x=" + this.x + ", y=" + this.y + ", z=" + this.z;

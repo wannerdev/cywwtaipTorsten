@@ -4,6 +4,8 @@ import lenz.htw.cywwtaip.net.NetworkClient;
 import lenz.htw.cywwtaip.world.GraphNode;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
+import java.util.ArrayList;
+
 public class Client {
 
     private static float nodesOfBots[];
@@ -17,21 +19,21 @@ public class Client {
         float ang3=0.0001f,angle =0.00001f; //Try to fill in circle motion
         float ticks=0;
         GraphNode[] graph = client.getGraph();
-        TNode[] TGraph = new TNode[graph.length];
         TNode first= null;
-        for (int i=0; i< graph.length; i++) {
-            //System.out.println(n + ": " + n.owner + ", " + n.blocked);
-            TGraph[i]= new TNode(graph[i]);
-            //TGraph[i]
-        }
-        System.out.printf(args[0]+" TNodes:"+TGraph.length);
-        System.out.printf("first graphnode"+graph[0].toString());
-        System.out.printf("Nei from one"+graph[0].neighbors.toString());
+        //System.out.printf(args[0]+" TNodes:"+TGraph.length);
+        //System.out.printf("first graphnode"+graph[0].toString());
+        //System.out.printf("Nei from one"+graph[0].neighbors.toString());
+        nodesOfBots = new float[]{-1,-1,-1};
+        GraphNode myGraphNode = getMyNodeId(client,0);
+        TNode myTNode = new TNode(myGraphNode);
+        TNode targetNode = new TNode(graph[100]);
+        dijkstra D  = new dijkstra(graph,myTNode,targetNode);
+        ArrayList<TNode> path = D.createShortestPath();
         while (client.isAlive()) {
             //GraphNode[] myGraph = client.getGraph();
 
             //System.out.printf("First TNode"+TGraph[0].id);
-            nodesOfBots = new float[]{-1,-1,-1};
+
 //            Vector3D Destination =  new Vector3D( 0,0,0);//myGraph[nodeNo].x,myGraph[nodeNo].y,myGraph[nodeNo].z);
             Vector3D Destination =  new Vector3D( -0.94,0,0);//myGraph[nodeNo].x,myGraph[nodeNo].y,myGraph[nodeNo].z);
             //check Vector3D Destination =  new Vector3D( 0,0.95,0);//myGraph[nodeNo].x,myGraph[nodeNo].y,myGraph[nodeNo].z);
@@ -43,7 +45,7 @@ public class Client {
             // System.out.println(Destination.toString());
             float ang1 =  rot.getRotationAngle(Destination0, client,0, myPlNumber);
             float ang2 =  rot.getRotationAngle(Destination1, client,1, myPlNumber);
-            //float ang3 =  rot.getRotationAngle(Destination2, client,2, myPlNumber);
+
             client.changeMoveDirection(0, ang1);
             client.changeMoveDirection(1, ang2);
 

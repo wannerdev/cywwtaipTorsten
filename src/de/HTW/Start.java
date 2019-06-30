@@ -13,7 +13,7 @@ public class Start {
             // Server.main(new String[]{"720", "460"});
 
             try{
-                Process proc = Runtime.getRuntime().exec("java -Djava.library.path=\"C:\\Users\\johan\\IdeaProjects\\cywwtaipTorsten\\lenz\\lib\\native\" -jar \"C:\\Users\\johan\\IdeaProjects\\cywwtaipTorsten\\lenz\\cywwtaip.jar\"  1280 720");
+                Process proc = Runtime.getRuntime().exec("java -Djava.library.path=\"D:\\Projekte\\uni\\GT1\\libraries\\lib\\native\" -jar \"D:\\Projekte\\uni\\GT1\\libraries\\cywwtaip.jar\"  1280 720");
                 BufferedReader bir  = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 
                 String line = "";
