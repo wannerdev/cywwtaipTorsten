@@ -7,11 +7,12 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 public class TNode implements Comparable<TNode>  {
-    static private final Comparator<TNode> COMPARATOR = Comparator.comparing(TNode::getDistance);
+    static private final Comparator<TNode> COMPARATOR = Comparator.comparing(TNode::getfScore);
     static int counter = 0;
     //Maybe by importing create a id for each node
     public int id;
     public double distance;
+    public float gScore, fScore;
     public TNode predecessor;
     public ArrayList<TNode> neighbors = new ArrayList<>();
 
@@ -22,10 +23,11 @@ public class TNode implements Comparable<TNode>  {
     public int owner;
 
     public TNode(GraphNode in) {
-        counter++;
+
         predecessor = null;
         distance = Double.MAX_VALUE;
-        id = counter;
+
+
         this.x = in.x;
         this.y = in.y;
         this.z = in.z;
@@ -49,6 +51,8 @@ public class TNode implements Comparable<TNode>  {
         return distance;
     }
 
+    public float getfScore() { return  fScore;}
+
     public int hashCode() {
         return (int) (((float) ((int) (((float) ((int) (this.x * 1260.0F)) + this.y) * 1260.0F)) + this.z) * 1260.0F);
     }
@@ -63,10 +67,16 @@ public class TNode implements Comparable<TNode>  {
         }
     }
 
-    public void setNeighbors(GraphNode[] neighbors) {
+    public void setNeighbors(GraphNode[] neighbors, GraphNode[] graph) {
         for (int i = 0; i < neighbors.length; i++) {
-            if (!neighbors[i].blocked)
-                this.neighbors.add(new TNode(neighbors[i]));
+            if (!neighbors[i].blocked){
+
+                TNode neigh = new TNode(neighbors[i]);
+                neigh.id = java.util.Arrays.asList(graph).indexOf(neighbors[i]);
+                this.neighbors.add(neigh);
+            }
+
+
         }
     }
 

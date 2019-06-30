@@ -64,7 +64,7 @@ public class dijkstra {
             TNode currentNode = getNodewithShortestDistance(unsettledNodes);
 
 
-            currentNode.setNeighbors(findSiblingNode(currentNode).neighbors);
+            currentNode.setNeighbors(findSiblingNode(currentNode).neighbors,graph);
             unsettledNodes.remove(currentNode.hashCode());
 
             if (currentNode == targetNode) {

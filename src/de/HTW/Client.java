@@ -5,6 +5,8 @@ import lenz.htw.cywwtaip.world.GraphNode;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.PriorityQueue;
 
 public class Client {
 
@@ -24,15 +26,12 @@ public class Client {
         //System.out.printf("first graphnode"+graph[0].toString());
         //System.out.printf("Nei from one"+graph[0].neighbors.toString());
         nodesOfBots = new float[]{-1,-1,-1};
-        GraphNode myGraphNode = getMyNodeId(client,0);
-        TNode myTNode = new TNode(myGraphNode);
-        TNode targetNode = new TNode(graph[100]);
-        dijkstra D  = new dijkstra(graph,myTNode,targetNode);
-       // ArrayList<TNode> path = D.createShortestPath();
-        while (client.isAlive()) {
-            //GraphNode[] myGraph = client.getGraph();
 
-            //System.out.printf("First TNode"+TGraph[0].id);
+
+
+
+        while (client.isAlive()) {
+
 
 //            Vector3D Destination =  new Vector3D( 0,0,0);//myGraph[nodeNo].x,myGraph[nodeNo].y,myGraph[nodeNo].z);
             Vector3D Destination =  new Vector3D( -0.94,0,0);//myGraph[nodeNo].x,myGraph[nodeNo].y,myGraph[nodeNo].z);
@@ -43,8 +42,9 @@ public class Client {
             Vector3D Destination1 = tar.giveClosestEnergy(client.getBotPosition(myPlNumber,1));
             Vector3D Destination2 = tar.giveClosestEnergy(client.getBotPosition(myPlNumber,2));
             // System.out.println(Destination.toString());
-            float ang1 =  rot.getRotationAngle(Destination0, client,0, myPlNumber);
-            float ang2 =  rot.getRotationAngle(Destination1, client,1, myPlNumber);
+
+
+         
 
             client.changeMoveDirection(0, ang1);
             client.changeMoveDirection(1, ang2);
@@ -83,49 +83,5 @@ public class Client {
      * Sets the array nodesOfBots to the GraphNode indexes on the server
      * @param client
      */
-    private static void getMyNodes(NetworkClient client){
-        GraphNode[] graph = client.getGraph();
-        float pos1[] = client.getBotPosition(client.getMyPlayerNumber(),0);
-        float pos2[] = client.getBotPosition(client.getMyPlayerNumber(),1);
-        float pos3[] = client.getBotPosition(client.getMyPlayerNumber(),2);
-        for (int i =0 ; i< graph.length; i++) {
-            GraphNode n = graph[i];
-            if(atNode(n,pos1))nodesOfBots[0]=i;
-            if(atNode(n,pos2))nodesOfBots[1]=i;
-            if(atNode(n,pos3))nodesOfBots[2]=i;
-        }
-    }
 
-    /**
-     * Searches graph for the node with the corresponding bot.(dumb search)
-     * @param client
-     * @param bot
-     * @returns GraphNode of the position of the Bot
-     */
-    public static GraphNode getMyNodeId(NetworkClient client, int bot){
-        GraphNode[] graph = client.getGraph();
-        float pos1[] = client.getBotPosition(client.getMyPlayerNumber(),bot);
-        int i=0;
-        for (; i< graph.length; i++) {
-            if(atNode(graph[i],pos1)){
-                nodesOfBots[bot]=i;
-                break;
-            }
-        }
-        return graph[i];
-    }
-
-    /**
-     * Just a simple check if the positions match
-     * @param n
-     * @param spot
-     * @return
-     */
-    public static boolean atNode(GraphNode n, float spot[]){
-        if (n.blocked) return false;
-        if(n.x ==spot[0]&& n.y ==spot[1]&& n.z ==spot[2]) {
-            return true;
-        }
-        return false;
-    }
 }
