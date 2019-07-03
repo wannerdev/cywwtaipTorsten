@@ -20,40 +20,31 @@ public class Client {
         Cluster cl;
 
        // cl = new Cluster(myPlNumber, graph, 3, 10000);
-        BotBehavior Bot0 = new BotBehavior(0, graph, client, myPlNumber,BotBehavior.type.random);
-        BotBehavior Bot1 = new BotBehavior(1, graph, client, myPlNumber,BotBehavior.type.random);
-        BotBehavior Bot2 = new BotBehavior(2, graph, client, myPlNumber,BotBehavior.type.random);
+            BotBehavior Bot0 = new BotBehavior(0, graph, client, myPlNumber, BotBehavior.type.random);
+            BotBehavior Bot1 = new BotBehavior(1, graph, client, myPlNumber, BotBehavior.type.random);
+            BotBehavior Bot2 = new BotBehavior(2, graph, client, myPlNumber, BotBehavior.type.random);
 
 
         int frames = 0;
-        long current=System.currentTimeMillis();
+        long current = System.currentTimeMillis();
         int ticks = 0;
 
         while (client.isAlive()) {
-
-
             if (!client.isGameRunning()) {
                 return;
             }
-            ticks++;
             if(current+5000 < System.currentTimeMillis() ) {
                 current = System.currentTimeMillis();
-
             }
 
             if (frames == 100) {
                 graph = client.getGraph();
-                //cl = new Cluster(myPlNumber, graph, 3, 10000);
+                cl = new Cluster(myPlNumber, graph, 3, 10000);
             }
 
             Bot0.Update();
-
-
             Bot1.Update();
-
-
             Bot2.Update();
-
 
             if (frames % 500 == 0 && myPlNumber == 1) {
                 //  printBotDistances(Bot0,Bot1,Bot2);
@@ -67,15 +58,12 @@ public class Client {
 
 
     static void printBotDistances(BotBehavior Bot0, BotBehavior Bot1, BotBehavior Bot2) {
-
       /*  System.out.printf("BOT0 DIST :: " + Bot0.distToTarget);
         System.out.printf("BOT1 DIST :: " + Bot1.distToTarget);
         System.out.printf("BOT2 DIST :: " + Bot2.distToTarget);*/
         // System.out.printf();
         System.out.printf("BOT1 STATE :: " + Bot1.currentState);
         System.out.printf("BOT2 STATE :: " + Bot2.currentState);
-
-
     }
 
 

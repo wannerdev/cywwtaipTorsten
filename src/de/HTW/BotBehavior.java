@@ -4,7 +4,6 @@ import lenz.htw.cywwtaip.net.NetworkClient;
 import lenz.htw.cywwtaip.world.GraphNode;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import java.util.Collections;
-import org.apache.commons.math3.ml.neuralnet.Network;
 
 import java.util.ArrayList;
 
@@ -35,8 +34,6 @@ public class BotBehavior {
         random,
         recharger,
         cluster;
-
-
     }
     public type  botType = type.random;
     public state currentState;
@@ -51,7 +48,6 @@ public class BotBehavior {
         currentState = state.idle;
         updateInfo();
         getNewDestination();
-
     }
 
     public void updateInfo() {
@@ -62,20 +58,13 @@ public class BotBehavior {
         if (target != null) {
             distToTarget = Vector3D.distance(pos, targetPos);
         }
-
-
-
     }
 
     void getNewDestination(){
-
-        /// HIER KOMMT DEIN CODE HIN JOHANNES!!
-
-
         switch (botType) {
 
             case random:
-                finalDest = new TNode(graph[(int)(Math.random() * (graph.length - 0) + 1) + 0]);
+                finalDest = new TNode(graph[(int)(Math.random() * (graph.length))]);
                 break;
 
             case cluster:
@@ -90,11 +79,7 @@ public class BotBehavior {
                 GraphNode myGraphNode = getMyNodeId(vec.getX(),vec.getY(),vec.getZ());
                 finalDest  = new TNode(myGraphNode);
                 break;
-
-
         }
-
-
 
         GraphNode myGraphNode = getMyNodeId();
         if (myGraphNode!= null){
@@ -178,7 +163,7 @@ public class BotBehavior {
     public void calcPath() {
         counter++;
         A_Star A = new A_Star(graph,currentNode,finalDest);
-        myPath = A.A_Star();
+        myPath = A.A_Start();
         Collections.reverse(myPath);
         myPath.remove(0);
         target = myPath.get(0);
@@ -188,11 +173,8 @@ public class BotBehavior {
             System.out.printf("Player " + PlayerNo + " Bot "+ botNo+" finished Path");
         }
 
-
-
         ready = true;
         currentState = state.moving;
-
     }
 
 
@@ -210,7 +192,7 @@ public class BotBehavior {
                 return  graph[i];
             }
         }
-      //  System.out.printf("no Node for Pos");
+        System.out.printf("no Node for Pos");
         return null;
 
     }
@@ -223,7 +205,7 @@ public class BotBehavior {
                 return  graph[i];
             }
         }
-        //  System.out.printf("no Node for Pos");
+        System.out.printf("no Node for Pos with params");
         return null;
 
     }

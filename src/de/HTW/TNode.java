@@ -75,8 +75,6 @@ public class TNode implements Comparable<TNode>  {
                 neigh.id = java.util.Arrays.asList(graph).indexOf(neighbors[i]);
                 this.neighbors.add(neigh);
             }
-
-
         }
     }
 

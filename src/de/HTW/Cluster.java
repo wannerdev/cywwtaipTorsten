@@ -70,11 +70,11 @@ public class Cluster {
                    N.addAll(newN); //joined with N'
                    if (!c.contains(newp)) {// is not yet member of any cluster
                        c.add(p); //P' to cluster C
-                       if (noise.contains(p)) {
+                       if (noise.contains(p)) {//unmark P' as NOISE if necessary
                            noise.remove(p);
                        }
                    }
-                   //unmark P' as NOISE if necessary
+
                }
            }
        }
@@ -102,16 +102,16 @@ public class Cluster {
                     //todo change
                     if (!isMyColor(no)) { //|| RATEFUNCTION ||
                         res.add(no);
-                        list2.addAll(Arrays.asList(no.neighbors));
+                        //list2.addAll(Arrays.asList(no.neighbors));
                     }
                 }
-            for (GraphNode no : list2) {
+            /*for (GraphNode no : list2) {
                 //todo change
                 if (!isMyColor(no)) { //|| RATEFUNCTION ||
                     res.add(no);
                     list.addAll(Arrays.asList(no.neighbors));
                 }
-            }
+            }*/
         }
         return res;
     }

@@ -18,11 +18,11 @@ public class A_Star {
     private TNode Start, Goal;
 
 
-    public A_Star(GraphNode[] sourceGraph, TNode start, TNode goal) {
+    public A_Star(GraphNode[] sourceGraph, TNode start, TNode goal)  {
         graph = sourceGraph;
         gscore = new HashMap<>();
         this.Start = start;
-
+        //if (Start ==null || goal==null) throw new Exception("Start or goal node Null");
         this.Goal = goal;
         for (int i = 0; i < graph.length; i++) {
 
@@ -44,18 +44,11 @@ public class A_Star {
                     gscore.put(node.id, Float.MAX_VALUE);
                     node.gScore = Float.MAX_VALUE;
                 }
-
-
-
             }
-
-
         }
         this.Start = start;
         this.Start.distance = 0;
         this.Goal = goal;
-
-
     }
 
     public ArrayList<TNode> reconstruct_path(HashMap<Integer, TNode> cameFrom, TNode current) {
@@ -69,7 +62,7 @@ public class A_Star {
         return total_path;
     }
 
-    public ArrayList<TNode> A_Star() {
+    public ArrayList<TNode> A_Start() {
         // The set of nodes already evaluated
         HashSet<TNode> closedSet = new HashSet<TNode>();
 
@@ -157,7 +150,6 @@ public class A_Star {
     }
 
     private TNode lowestFcost() {
-
         if (openSet.size() == 1) {
             return (TNode) openSet.iterator().next();
         }
@@ -166,7 +158,6 @@ public class A_Star {
         // sort using Collections.sort(); method
         Collections.sort(cache);
         return cache.get(0);
-
     }
 
     private float dist_between(TNode no1, TNode no2) {
@@ -175,7 +166,6 @@ public class A_Star {
         return (float) v1.distance(v2);
     }
 
-    //
     private float heuristic_cost_estimate(TNode start, TNode goal) {
         float dx = Math.abs(start.x - goal.x);
         float dy = Math.abs(start.y - goal.y);
