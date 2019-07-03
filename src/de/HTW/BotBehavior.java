@@ -21,7 +21,9 @@ public class BotBehavior {
     Rotator rot;
     Vector3D targetPos;
     int counter = 0 ;
+    int ticks=0;
     Cluster cl;
+    float angle0=0,angle1=0,angle2 = 0;
 
     public enum state {
         idle,
@@ -47,7 +49,6 @@ public class BotBehavior {
         botType = behaviorType;
         currentState = state.idle;
         updateInfo();
-        getNewDestination();
     }
 
     public void updateInfo() {
@@ -149,10 +150,27 @@ public class BotBehavior {
 
     public void idle() {
 
-        float angle = 0;
-        angle += 0.001f;
-
-        Client.changeMoveDirection(botNo, angle);
+        ticks++;
+        if(ticks%15==0) {
+            switch (this.botNo) {
+                case 0: {//einfarbig
+                    angle0 = 0.0000000001f;
+                    Client.changeMoveDirection(botNo, angle0);
+                    break;
+                }
+                case 1: {//gepunktet
+                    angle1 = 0.000001f;
+                    Client.changeMoveDirection(botNo, angle1);
+                    break;
+                }
+                case 2: {//gestreift
+                    angle2 = 0.00001f;
+                    angle2 =- 0.000001f;
+                    Client.changeMoveDirection(botNo, angle2);
+                    break;
+                }
+            }
+        }
     }
 
     public void recharge() {

@@ -20,9 +20,9 @@ public class Client {
         Cluster cl;
 
        // cl = new Cluster(myPlNumber, graph, 3, 10000);
-            BotBehavior Bot0 = new BotBehavior(0, graph, client, myPlNumber, BotBehavior.type.random);
-            BotBehavior Bot1 = new BotBehavior(1, graph, client, myPlNumber, BotBehavior.type.random);
-            BotBehavior Bot2 = new BotBehavior(2, graph, client, myPlNumber, BotBehavior.type.random);
+        BotBehavior Bot0 = new BotBehavior(0, graph, client, myPlNumber, BotBehavior.type.random);
+        BotBehavior Bot1 = new BotBehavior(1, graph, client, myPlNumber, BotBehavior.type.recharger);
+        BotBehavior Bot2 = new BotBehavior(2, graph, client, myPlNumber, BotBehavior.type.cluster);
 
 
         int frames = 0;
